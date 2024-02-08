@@ -3,6 +3,8 @@ import 'package:fl_ide/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:routefly/routefly.dart';
 
+import '../../themes.dart';
+
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 
@@ -10,8 +12,7 @@ class SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterSplashScreen.fadeIn(
       animationDuration: const Duration(milliseconds: 500),
-      backgroundColor:
-          Colors.white /* THEMES['androidstudio']!['root']?.backgroundColor */,
+      backgroundColor: THEMES['androidstudio']!['root']?.backgroundColor,
       onInit: () {
         debugPrint("On Init");
       },

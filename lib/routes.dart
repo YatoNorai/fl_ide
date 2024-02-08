@@ -3,6 +3,7 @@ import 'package:routefly/routefly.dart';
 import 'app/(public)/aplash_page.dart' as a0;
 import 'app/(public)/code_page.dart' as a1;
 import 'app/(public)/home_page.dart' as a2;
+import 'app/(public)/settings_page.dart' as a3;
 
 List<RouteEntity> get routes => [
   RouteEntity(
@@ -32,6 +33,15 @@ List<RouteEntity> get routes => [
       const a2.HomePage(),
     ),
   ),
+  RouteEntity(
+    key: '/settings',
+    uri: Uri.parse('/settings'),
+    routeBuilder: (ctx, settings) => Routefly.defaultRouteBuilder(
+      ctx,
+      settings,
+      const a3.SettingsPage(),
+    ),
+  ),
 ];
 
 const routePaths = (
@@ -39,4 +49,5 @@ const routePaths = (
   aplash: '/aplash',
   code: '/code',
   home: '/home',
+  settings: '/settings',
 );

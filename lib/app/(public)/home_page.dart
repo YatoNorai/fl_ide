@@ -42,7 +42,9 @@ class _HomePageState extends State<HomePage> {
           leadingWidth: 130,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Routefly.navigate(routePaths.settings);
+              },
               icon: const Icon(
                 Icons.settings_outlined,
               ),
