@@ -83,58 +83,59 @@ class _HomePageState extends State<HomePage> {
                 'Projetos',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: projects.length,
-                  itemBuilder: (_, index) {
-                    final project = projects[index];
-                    return TextButton(
-                      onLongPress: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Excluir'),
-                                content: Text(
-                                  "Você deseja deletar: ${project.path} [${project.title}] ",
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: const Text("Deletar"),
-                                    onPressed: () {
-                                      //  print(project.path);
-                                      deleteProjectsFolder(project.path);
-                                      Routefly.pop(context);
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      onPressed: () {
-                        print(project.path);
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                              padding: const EdgeInsets.all(15),
-                              // margin: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(Icons.code_off_outlined)),
-                          const SizedBox(width: 10),
-                          Text(projects.isEmpty
-                              ? 'Voce não tem nenhum projeto existente!'
-                              : project.title),
-                        ],
+              projects.isEmpty
+                  ? const Center(
+                      child: Text('Voce não tem nenhum projeto existente!'))
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: projects.length,
+                        itemBuilder: (_, index) {
+                          final project = projects[index];
+                          return TextButton(
+                            onLongPress: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Excluir'),
+                                      content: Text(
+                                        "Você deseja deletar: ${project.path} [${project.title}] ",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text("Deletar"),
+                                          onPressed: () {
+                                            //  print(project.path);
+                                            deleteProjectsFolder(project.path);
+                                            Routefly.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            onPressed: () {
+                              print(project.path);
+                            },
+                            child: Row(
+                              children: [
+                                Container(
+                                    padding: const EdgeInsets.all(15),
+                                    // margin: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(Icons.code_off_outlined)),
+                                const SizedBox(width: 10),
+                                Text(project.title),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                /* ListView(
+                      /* ListView(
                   physics: const NeverScrollableScrollPhysics(),
                   children: const [
                     Text(
@@ -145,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ), */
-              ),
+                    ),
             ],
           ),
         ),
