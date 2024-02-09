@@ -27,9 +27,11 @@ class _HomePageState extends State<HomePage> {
     return RxBuilder(builder: (context) {
       final projects = projectsState.value;
       return Scaffold(
-        backgroundColor: THEMES['androidstudio']!['root']?.backgroundColor,
+        backgroundColor:
+            THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
         appBar: AppBar(
-          backgroundColor: THEMES['androidstudio']!['root']?.backgroundColor,
+          backgroundColor:
+              THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
           leading: const Center(
             child: Padding(
               padding: EdgeInsets.only(left: 0),

@@ -28,7 +28,7 @@ Future<void> deleteProjectsFolder(String path) async {
 }
 
 Future<void> deleteProjectsRenameFolder(String path) async {
-  final repository = injector.get<ProjectsRepository>();
+  // final repository = injector.get<ProjectsRepository>();
 
   fecthProjects();
 }
