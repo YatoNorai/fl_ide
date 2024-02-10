@@ -139,17 +139,6 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-                      /* ListView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: const [
-                    Text(
-                      '         Voce não tem nenhum projeto existente!',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ), */
                     ),
             ],
           ),
@@ -159,8 +148,6 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.deepPurpleAccent[400]),
           onPressed: () {
             Routefly.navigate(routePaths.code);
-            /*   Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => const HomePage())); */
           },
           child: const Row(
             mainAxisSize: MainAxisSize.min,
@@ -171,10 +158,6 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.white,
                 ),
               ),
-              /* Icon(
-                  Icons.add_outlined,
-                  color: Colors.white,
-                ), */
             ],
           ),
         ),

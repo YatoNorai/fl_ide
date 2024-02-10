@@ -3,9 +3,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:rubber/rubber.dart';
 
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
+import '../../../../../../themes.dart';
 import '../code_theme/code_theme_data.dart';
 import '../componets/custom_context_menu.dart';
 import '../componets/custom_magnifier.dart';
@@ -118,7 +120,7 @@ class CodeField extends StatefulWidget {
   State<CodeField> createState() => _CodeFieldState();
 }
 
-class _CodeFieldState extends State<CodeField> {
+class _CodeFieldState extends State<CodeField> with TickerProviderStateMixin {
   // Add a controller
   LinkedScrollControllerGroup? _controllers;
   bool blockScroll = false;
@@ -126,6 +128,7 @@ class _CodeFieldState extends State<CodeField> {
   late final ScrollController _horizontalController = ScrollController();
   ScrollController? _numberScroll;
   ScrollController? _codeScroll;
+  late RubberAnimationController _rubberAnimationController;
   LineNumberController? _numberController;
   bool isZoom = false;
 
@@ -137,6 +140,14 @@ class _CodeFieldState extends State<CodeField> {
   @override
   void initState() {
     super.initState();
+    _rubberAnimationController = RubberAnimationController(
+        vsync: this,
+        upperBoundValue: AnimationControllerValue(percentage: 1.0),
+        halfBoundValue: AnimationControllerValue(percentage: 0.35),
+        lowerBoundValue: AnimationControllerValue(pixel: 80),
+        duration: const Duration(milliseconds: 200));
+    // _rubberAnimationController.addStatusListener(_statusListener);
+    // _rubberAnimationController.animationState.addListener(_stateListener);
     _controllers = LinkedScrollControllerGroup();
     _numberScroll = _controllers?.addAndGet();
     _codeScroll = _controllers?.addAndGet();
@@ -253,9 +264,9 @@ class _CodeFieldState extends State<CodeField> {
     var intrinsic = IntrinsicWidth(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        //  crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ConstrainedBox(
+          /*  ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: 0,
               minWidth: max(minWidth - leftPad, 0),
@@ -266,7 +277,7 @@ class _CodeFieldState extends State<CodeField> {
               ),
               child: Text(longestLine, style: textStyle),
             ), // Add extra padding
-          ),
+          ), */
           Expanded(child: codeField)
         ],
       ),
@@ -292,7 +303,42 @@ class _CodeFieldState extends State<CodeField> {
   }
 
   @override
+  Size get preferredSize => Size(
+      250,
+      // 2 is border size
+      min(26 * _numberController!.value.text.length, 200) + 2);
+
+  @override
   Widget build(BuildContext context) {
+    List<String> sheetHeader = [
+      '->',
+      '(',
+      ')',
+      '{',
+      '}',
+      '[',
+      ']',
+      ';',
+      '==',
+      '<=',
+      '>=',
+      '"',
+      ':',
+      ';',
+      '=',
+      '+',
+      '-',
+      '*',
+      '/',
+      '%',
+      '&',
+      '|',
+      '^',
+      '!',
+      '?',
+      '<',
+      '>',
+    ];
     // Default color scheme
     const rootKey = 'root';
     final defaultBg = Colors.grey.shade900;
@@ -434,104 +480,162 @@ class _CodeFieldState extends State<CodeField> {
       ),
     );
 
-    return Scrollbar(
-      interactive: true,
-      trackVisibility: true,
-      thickness: 8,
-      controller: _horizontalController,
-      child: Scrollbar(
+    return RubberBottomSheet(
+      dragFriction: 1.0,
+      headerHeight: 60,
+      animationController: _rubberAnimationController,
+      header: Container(
+        decoration: BoxDecoration(
+          color: THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey[600]!,
+            ),
+          ),
+        ),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(0),
+          scrollDirection: Axis.horizontal,
+          itemCount: sheetHeader.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10, top: 5),
+              child: TextButton(
+                  style: TextButton.styleFrom(),
+                  onPressed: () {
+                    if (sheetHeader[index] == '(') {
+                      widget.controller.text += '()';
+                      int offset = (widget.controller.text
+                                  .lastIndexOf(sheetHeader[index]) +
+                              sheetHeader[index].length) ~/
+                          1;
+                      widget.controller.selection =
+                          TextSelection.collapsed(offset: offset);
+                    } else if (sheetHeader[index] == '{') {
+                      widget.controller.text += '{}';
+                      int offset = (widget.controller.text
+                                  .lastIndexOf(sheetHeader[index]) +
+                              sheetHeader[index].length) ~/
+                          1;
+                      widget.controller.selection =
+                          TextSelection.collapsed(offset: offset);
+                    } else if (sheetHeader[index] == '[') {
+                      widget.controller.text += '[]';
+                      int offset = (widget.controller.text
+                                  .lastIndexOf(sheetHeader[index]) +
+                              sheetHeader[index].length) ~/
+                          1;
+                      widget.controller.selection =
+                          TextSelection.collapsed(offset: offset);
+                    } else {
+                      widget.controller.text += sheetHeader[index];
+                    }
+                  },
+                  child: Text(sheetHeader[index])),
+            );
+          },
+        ),
+      ),
+      lowerLayer: Scrollbar(
         interactive: true,
         trackVisibility: true,
         thickness: 8,
-        controller: _verticalController,
-        child: TableView.builder(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
-          horizontalDetails: ScrollableDetails.horizontal(
-            controller: _horizontalController,
-          ),
-          verticalDetails: ScrollableDetails.vertical(
-            controller: _verticalController,
-          ),
-          cellBuilder: (BuildContext context, TableVicinity vicinity) {
-            return Container(
-              decoration: widget.decoration,
-              color: backgroundCol,
-              padding:
-                  !widget.lineNumbers ? const EdgeInsets.only(left: 8) : null,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  //   if (widget.lineNumbers && numberCol != null) numberCol,
-                  if (vicinity.column.isEven) numberCol! else codeCol,
-                ],
-              ),
-            );
-          },
-          columnCount: 2,
-          columnBuilder: (int index) {
-            switch (index) {
-              case 0:
-                return TableSpan(
-                  foregroundDecoration: TableSpanDecoration(
-                    consumeSpanPadding: false,
-                    // color: index.isEven ? Colors.purple[100] : null,
-                    border: TableSpanBorder(
-                      trailing: BorderSide(
-                        color: Colors.grey[700]!,
-                        width: 0.5,
+        controller: _horizontalController,
+        child: Scrollbar(
+          interactive: true,
+          trackVisibility: true,
+          thickness: 8,
+          controller: _verticalController,
+          child: TableView.builder(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+            horizontalDetails: ScrollableDetails.horizontal(
+              controller: _horizontalController,
+            ),
+            verticalDetails: ScrollableDetails.vertical(
+              controller: _verticalController,
+            ),
+            cellBuilder: (BuildContext context, TableVicinity vicinity) {
+              return Container(
+                decoration: widget.decoration,
+                color: backgroundCol,
+                padding:
+                    !widget.lineNumbers ? const EdgeInsets.only(left: 8) : null,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    //   if (widget.lineNumbers && numberCol != null) numberCol,
+                    if (vicinity.column.isEven) numberCol! else codeCol,
+                  ],
+                ),
+              );
+            },
+            columnCount: 2,
+            columnBuilder: (int index) {
+              switch (index) {
+                case 0:
+                  return TableSpan(
+                    foregroundDecoration: TableSpanDecoration(
+                      consumeSpanPadding: true,
+                      //color: Colors.purple[100],
+                      border: TableSpanBorder(
+                        trailing: BorderSide(
+                          color: Colors.grey[700]!,
+                          width: 0.5,
+                        ),
                       ),
                     ),
-                  ),
-                  extent: FixedTableSpanExtent(calculateValue().toDouble()),
-                  /*  onEnter: (_) => print('Entered column $index'),
-                    recognizerFactories: <Type, GestureRecognizerFactory>{
-                      TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-                          TapGestureRecognizer>(
-                        () => TapGestureRecognizer(),
-                        (TapGestureRecognizer t) =>
-                            t.onTap = () => print('Tap column $index'),
-                      ),
-                    }, */
-                );
-              case 1:
-                return const TableSpan(
-                  // foregroundDecoration: decoration,
-                  extent: FractionalTableSpanExtent(2.8),
-                  //  onEnter: (_) => print('Entered column $index'),
-                  //  cursor: SystemMouseCursors.contextMenu,
-                );
-            }
-            throw AssertionError(
-                'This should be unreachable, as every index is accounted for in the switch clauses.');
-          },
-          rowCount: 1,
-          rowBuilder: (int index) {
-            /// print(_numberController!.value.text.length / 23);
-            switch (index) {
-              case 0:
-                return TableSpan(
-                  //  backgroundDecoration: decoration,
-                  extent: FractionalTableSpanExtent(
-                      _numberController!.value.text.length / 83),
-                  /* recognizerFactories: <Type, GestureRecognizerFactory>{
-                      TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-                          TapGestureRecognizer>(
-                        () => TapGestureRecognizer(),
-                        (TapGestureRecognizer t) =>
-                            t.onTap = () => print('Tap row $index'),
-                      ),
-                    }, */
-                );
-            }
-            throw AssertionError(
-                'This should be unreachable, as every index is accounted for in the switch clauses.');
-          },
-          pinnedColumnCount: 1,
-          diagonalDragBehavior: DiagonalDragBehavior.free,
+                    extent: FixedTableSpanExtent(calculateValue().toDouble()),
+                    /*  onEnter: (_) => print('Entered column $index'),
+                      recognizerFactories: <Type, GestureRecognizerFactory>{
+                        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+                            TapGestureRecognizer>(
+                          () => TapGestureRecognizer(),
+                          (TapGestureRecognizer t) =>
+                              t.onTap = () => print('Tap column $index'),
+                        ),
+                      }, */
+                  );
+                case 1:
+                  return const TableSpan(
+                    // foregroundDecoration: decoration,
+                    extent: FractionalTableSpanExtent(2.8),
+                    //  onEnter: (_) => print('Entered column $index'),
+                    //  cursor: SystemMouseCursors.contextMenu,
+                  );
+              }
+              throw AssertionError(
+                  'This should be unreachable, as every index is accounted for in the switch clauses.');
+            },
+            rowCount: 1,
+            rowBuilder: (int index) {
+              /// print(_numberController!.value.text.length / 23);
+              switch (index) {
+                case 0:
+                  return TableSpan(
+                    //  backgroundDecoration: decoration,
+                    extent: FractionalTableSpanExtent(preferredSize.height),
+                    /* recognizerFactories: <Type, GestureRecognizerFactory>{
+                        TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+                            TapGestureRecognizer>(
+                          () => TapGestureRecognizer(),
+                          (TapGestureRecognizer t) =>
+                              t.onTap = () => print('Tap row $index'),
+                        ),
+                      }, */
+                  );
+              }
+              throw AssertionError(
+                  'This should be unreachable, as every index is accounted for in the switch clauses.');
+            },
+            pinnedColumnCount: 1,
+            diagonalDragBehavior: DiagonalDragBehavior.free,
+          ),
         ),
       ),
+      upperLayer: Container(
+          color: THEMES['tomorrow-night-blue']!['root']?.backgroundColor),
     );
   }
 }

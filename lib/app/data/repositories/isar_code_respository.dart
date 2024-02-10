@@ -9,9 +9,9 @@ class IsarCodeRepository implements CodeRepository {
   }
 
   @override
-  Future<List<CodeModel>> getAll() {
+  Future<List<CodeModel>> getAll() async {
     // TODO: implement getAll
-    throw UnimplementedError();
+    return [];
   }
 
   @override
