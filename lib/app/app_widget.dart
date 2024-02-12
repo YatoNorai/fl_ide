@@ -11,8 +11,8 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: THEMES['tomorrow-night-blue']!['root']
-          ?.backgroundColor, // Cor desejada
+      systemNavigationBarColor:
+          THEMES['vs2015']!['root']?.backgroundColor, // Cor desejada
     ));
     return MaterialApp.router(
       routerConfig: Routefly.routerConfig(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:rubber/rubber.dart';
 
@@ -486,54 +487,68 @@ class _CodeFieldState extends State<CodeField> with TickerProviderStateMixin {
       animationController: _rubberAnimationController,
       header: Container(
         decoration: BoxDecoration(
-          color: THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
+          color: backgroundCol,
           border: Border(
             top: BorderSide(
               color: Colors.grey[600]!,
             ),
           ),
         ),
-        child: ListView.builder(
-          padding: const EdgeInsets.all(0),
-          scrollDirection: Axis.horizontal,
-          itemCount: sheetHeader.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10, top: 5),
-              child: TextButton(
-                  style: TextButton.styleFrom(),
-                  onPressed: () {
-                    if (sheetHeader[index] == '(') {
-                      widget.controller.text += '()';
-                      int offset = (widget.controller.text
-                                  .lastIndexOf(sheetHeader[index]) +
-                              sheetHeader[index].length) ~/
-                          1;
-                      widget.controller.selection =
-                          TextSelection.collapsed(offset: offset);
-                    } else if (sheetHeader[index] == '{') {
-                      widget.controller.text += '{}';
-                      int offset = (widget.controller.text
-                                  .lastIndexOf(sheetHeader[index]) +
-                              sheetHeader[index].length) ~/
-                          1;
-                      widget.controller.selection =
-                          TextSelection.collapsed(offset: offset);
-                    } else if (sheetHeader[index] == '[') {
-                      widget.controller.text += '[]';
-                      int offset = (widget.controller.text
-                                  .lastIndexOf(sheetHeader[index]) +
-                              sheetHeader[index].length) ~/
-                          1;
-                      widget.controller.selection =
-                          TextSelection.collapsed(offset: offset);
-                    } else {
-                      widget.controller.text += sheetHeader[index];
-                    }
-                  },
-                  child: Text(sheetHeader[index])),
-            );
-          },
+        child: Column(
+          children: [
+            /* LinearProgressIndicator(
+              backgroundColor:
+                  THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
+              color: Colors.white,
+            ), */
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(0),
+                scrollDirection: Axis.horizontal,
+                itemCount: sheetHeader.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 0, top: 0),
+                    child: TextButton(
+                      style: TextButton.styleFrom(),
+                      onPressed: () {
+                        if (sheetHeader[index] == '(') {
+                          widget.controller.text += '()';
+                          int offset = (widget.controller.text
+                                      .lastIndexOf(sheetHeader[index]) +
+                                  sheetHeader[index].length) ~/
+                              1;
+                          widget.controller.selection =
+                              TextSelection.collapsed(offset: offset);
+                        } else if (sheetHeader[index] == '{') {
+                          widget.controller.text += '{}';
+                          int offset = (widget.controller.text
+                                      .lastIndexOf(sheetHeader[index]) +
+                                  sheetHeader[index].length) ~/
+                              1;
+                          widget.controller.selection =
+                              TextSelection.collapsed(offset: offset);
+                        } else if (sheetHeader[index] == '[') {
+                          widget.controller.text += '[]';
+                          int offset = (widget.controller.text
+                                      .lastIndexOf(sheetHeader[index]) +
+                                  sheetHeader[index].length) ~/
+                              1;
+                          widget.controller.selection =
+                              TextSelection.collapsed(offset: offset);
+                        } else {
+                          widget.controller.text += sheetHeader[index];
+                        }
+                      },
+                      child: Text(
+                        sheetHeader[index],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
       lowerLayer: Scrollbar(
@@ -634,8 +649,7 @@ class _CodeFieldState extends State<CodeField> with TickerProviderStateMixin {
           ),
         ),
       ),
-      upperLayer: Container(
-          color: THEMES['tomorrow-night-blue']!['root']?.backgroundColor),
+      upperLayer: Container(color: backgroundCol),
     );
   }
 }

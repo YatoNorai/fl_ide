@@ -12,7 +12,7 @@ class SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterSplashScreen.fadeIn(
       animationDuration: const Duration(milliseconds: 500),
-      backgroundColor: THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
+      backgroundColor: THEMES['vs2015']!['root']?.backgroundColor,
       onInit: () {
         debugPrint("On Init");
       },

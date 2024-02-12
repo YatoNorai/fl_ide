@@ -27,11 +27,9 @@ class _HomePageState extends State<HomePage> {
     return RxBuilder(builder: (context) {
       final projects = projectsState.value;
       return Scaffold(
-        backgroundColor:
-            THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
+        backgroundColor: THEMES['vs2015']!['root']?.backgroundColor,
         appBar: AppBar(
-          backgroundColor:
-              THEMES['tomorrow-night-blue']!['root']?.backgroundColor,
+          backgroundColor: THEMES['vs2015']!['root']?.backgroundColor,
           leading: const Center(
             child: Padding(
               padding: EdgeInsets.only(left: 0),
